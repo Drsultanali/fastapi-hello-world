@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "todos"
+version = "0.1.0"
+description = ""
+authors = ["Drsultanali <sultan_ali338@yahoo.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.4"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
+
+[tool.poetry.scripts]
+dev = "todos.main:start"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
