@@ -1,31 +1,52 @@
 from fastapi import FastAPI
-
-app = FastAPI()
+from pydantic import BaseModel
 import uvicorn
 
+app = FastAPI()
+todos = {
+    "task1": "Shower",
+    "task2": "Eat Dinner",
+    "task3": "Grocery Shopping"
+
+}
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
-@app.get("/gettodos")
+# get all the todos
+@app.get("/get_todos")
 
 def getTodos():
-    return {"message": "Getting Todos!"}
+    return {"todos": todos}
 
-@app.post("/addTodo")
+# Data model for adding todos
 
-def addTodo():
-    return {"message": "Adding Todo!"}
+class TodoItem(BaseModel):
+    task: str
+    message: str
+@app.post("/add_todo")
 
-@app.put("/updatetodo")
+def add_todo(item: TodoItem):
+    if item.task in todos:
+        return {"Error": "Task already exists"}
+    todos[item.task] = item.message
+    return { "message": f"Added {item.task} to ", "todos":todos}
 
-def updateTodo():
-    return {"message": f"Updating Todo!"}
 
-@app.delete("/deleteTodo")
+@app.put("/update_todo/{task}")
 
-def deleteTodo():
+def updateTodo(task:str, message:str):
+    if task not in todos:
+        return {"Error": "Task not found"}
+    todos[task] = message
+    return { "message": f"Updated {task} to {message}", "todos": todos}
 
-    return {"message": f"Deleting Todo!"}
+@app.delete("/delet_todo/{task}")
+
+def deleteTodo(task:str, message:str):
+    if task not in todos:
+        return {"Error": "Task not found"}
+    del todos[task]
+    return { "message": f"Deleted {task}", "todos": todos}
 
 def start():    
     uvicorn.run("todos.main:app", host="127.0.0.1", port=8000, reload= True) 
